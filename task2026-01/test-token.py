@@ -1,17 +1,22 @@
 import re
-from solution import EXPRESSION_REGEXP
+from solution import SERIES_REGEXP
+import time
 
-regexp = re.compile(EXPRESSION_REGEXP)
-text = "(     63393394.98 /8505     )"
+with open('../examples-task2026-01/series/95232.html', encoding='utf-8') as f:
+    html = f.read()
 
-entities = set() 
-for match in regexp.finditer(text): 
-    for key, value in match.groupdict().items(): 
-        if value is not None: 
-            start, end = match.span(key) 
-            entities.add((start, end, key))
+start = time.time()
+regexp = re.compile(SERIES_REGEXP)
 
-entities = list(entities)
-entities.sort()
-for i in range(len(entities)):
-    print(entities[i])
+entities = set()
+
+for match in regexp.finditer(html):
+    for key, value in match.groupdict().items():
+        if value is not None:
+            start, end = match.span(key)
+            entities.add((start, end, key, value))
+
+for entity in entities:
+    print(entity)
+
+print(time.time() - start)
