@@ -5,12 +5,10 @@ from pathlib import Path
 
 texts = []
 answers = []
+test_dir = Path(__file__).parent / 'NEREL-v1.1' / 'test'
 
-dev_dir = Path(__file__).parent.parent / 'NEREL-v1.1' / 'test'
-
-for file in sorted(dev_dir.glob('*.txt')):
+for file in sorted(test_dir.glob('*.txt')):
     texts.append(file.read_text(encoding='utf-8'))
-
     entities = set()
     for line in file.with_suffix('.ann').read_text(encoding='utf-8').splitlines():
         if line.startswith('T'):

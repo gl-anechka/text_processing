@@ -1,9 +1,36 @@
 from typing import List, Iterable, Set, Tuple
+import re, pickle
+from pathlib import Path
 
+# функции обработки данных из обучения модели
+from features import tokenize, extract_features, make_examples
 
 class Solution:
     def __init__(self):
-        pass
+        # загрузка обученной модели
+        model_path = Path(__file__).parent / 'model.pkl'
+        with open(model_path, 'rb') as file:
+            self.vectorizer, self.model = pickle.load(file)
 
     def predict(self, texts: List[str]) -> Iterable[Set[Tuple[int, int, str]]]:
-        return [set() for _ in texts]
+        results = []
+
+        for text in texts:
+            tokens = tokenize(text)
+            examples = make_examples(text, tokens, set())
+            if not examples:
+                results.append(set())
+                continue
+
+            X = [features for start, end, features, entity_types in examples]
+            X_matrix = self.vectorizer.transform(X)
+            predictions = self.model.predict(X_matrix)
+
+            entities = set()
+            for (start, end, features, entity_types), predicted_type in zip(examples, predictions):
+                if predicted_type != 'NONE':
+                    entities.add((start, end, predicted_type))
+
+            results.append(entities)
+
+        return results
