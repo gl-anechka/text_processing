@@ -47,7 +47,7 @@ X_matrix = vectorizer.fit_transform(X)
 weights = [40.0 if label != 'NONE' else 1.0 for label in y]
 
 # обучение классификатора
-#model = SGDClassifier(loss='log_loss', class_weight='balanced', random_state=42, max_iter=8, tol=None, n_jobs=-1)
+#model = SGDClassifier(loss='log_loss', random_state=42, max_iter=8, tol=None, n_jobs=-1)
 model = LinearSVC(C=0.1, random_state=42)
 model.fit(X_matrix, y, sample_weight=weights)
 

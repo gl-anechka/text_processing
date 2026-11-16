@@ -16,14 +16,26 @@ def extract_features(text, tokens, i, j):
     start = tokens[i][1]
     end = tokens[j][2]
     fragment = text[start:end]
-    return {'first': first.lower(),
-            'last': last.lower(),
-            'length': len(words),
-            'first_upper': first[0].isupper(),
-            'last_upper': last[0].isupper(),
-            'has_digit': any(c.isdigit() for c in fragment),
-            'has_hyphen': '-' in fragment,
-            'previous': tokens[i - 1][0].lower() if i > 0 else ''}
+    return {'first': first.lower(),  # первое слово сущности
+            'last': last.lower(),  # последнее слово сущности
+            'length': len(words),  # длина фрагмента
+
+            'first_upper': first[0].isupper(),  # заглавная буква
+            'last_upper': last[0].isupper(),  # заглавная буква
+
+            'has_digit': any(c.isdigit() for c in fragment),  # наличие цифр
+            'has_hyphen': '-' in fragment,  # для составных названий
+
+            'previous': tokens[i - 1][0].lower() if i > 0 else '',  # контекст
+            'next': tokens[j + 1][0].lower() if j + 1 < len(tokens) else '',  # контекст
+
+            'first_suffix2': first.lower()[-2:],  # окончание первого слова
+            'first_suffix3': first.lower()[-3:],  # окончание первого слова
+            'last_suffix2': last.lower()[-2:],  # окончание последнего слова
+            'last_suffix3': last.lower()[-3:],  # окончание последнего слова
+
+            'all_capitalized': all(w[0].isupper() for w in words),  # фрагменты из слов с заглавной буквы
+            'n_capitalized': min(5, sum(w[0].isupper() for w in words))}  # кол-во таких слов
 
 
 # функция, которая создает обучающие примеры для модели
