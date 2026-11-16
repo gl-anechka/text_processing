@@ -1,9 +1,13 @@
 from pathlib import Path
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import SGDClassifier
+from sklearn.svm import LinearSVC
 import pickle
+import random
 
 from features import tokenize, make_examples
+
+#random.seed(42)
 
 # загрузка данных (из обучающего набора были удалены все разрывные сущности
 # по соглашению об условии задания)
@@ -29,6 +33,9 @@ y = []
 for text, tokens, entities in zip(texts, tokenized_texts, answers):
     examples = make_examples(text, tokens, entities)
     for start, end, features, entity_types in examples:
+        # уменьшить количество ложных примеров
+        #if not entity_types and random.random() > 0.15:
+        #    continue
         X.append(features)
         y.append(sorted(entity_types)[0] if entity_types else "NONE")
 
@@ -36,14 +43,16 @@ for text, tokens, entities in zip(texts, tokenized_texts, answers):
 vectorizer = DictVectorizer(sparse=True)
 X_matrix = vectorizer.fit_transform(X)
 
+# задаём веса обучающих примеров
+weights = [40.0 if label != 'NONE' else 1.0 for label in y]
+
 # обучение классификатора
-model = SGDClassifier(loss='log_loss', class_weight='balanced', random_state=42)
-model.fit(X_matrix, y)
+#model = SGDClassifier(loss='log_loss', class_weight='balanced', random_state=42, max_iter=8, tol=None, n_jobs=-1)
+model = LinearSVC(C=0.1, random_state=42)
+model.fit(X_matrix, y, sample_weight=weights)
 
 # сохранение модели
 model_path = Path(__file__).parent / 'model.pkl'
 with open(model_path, 'wb') as file:
     pickle.dump((vectorizer, model), file)
-
 print('Модель сохранена')
-print('Размер модели:', round(model_path.stat().st_size / 1024**2, 2), 'МБ')

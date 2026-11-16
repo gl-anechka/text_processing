@@ -1,9 +1,9 @@
 from typing import List, Iterable, Set, Tuple
-import re, pickle
+import pickle
 from pathlib import Path
 
 # функции обработки данных из обучения модели
-from features import tokenize, extract_features, make_examples
+from features import tokenize, make_examples
 
 class Solution:
     def __init__(self):
@@ -14,6 +14,7 @@ class Solution:
 
     def predict(self, texts: List[str]) -> Iterable[Set[Tuple[int, int, str]]]:
         results = []
+        none_idx = list(self.model.classes_).index('NONE')
 
         for text in texts:
             tokens = tokenize(text)

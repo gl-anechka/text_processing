@@ -23,8 +23,7 @@ def extract_features(text, tokens, i, j):
             'last_upper': last[0].isupper(),
             'has_digit': any(c.isdigit() for c in fragment),
             'has_hyphen': '-' in fragment,
-            'previous': tokens[i - 1][0].lower() if i > 0 else '',
-            'next': tokens[j + 1][0].lower() if j + 1 < len(tokens) else ''}
+            'previous': tokens[i - 1][0].lower() if i > 0 else ''}
 
 
 # функция, которая создает обучающие примеры для модели

@@ -5,7 +5,7 @@ from pathlib import Path
 
 texts = []
 answers = []
-test_dir = Path(__file__).parent / 'NEREL-v1.1' / 'test'
+test_dir = Path(__file__).parent / 'NEREL-v1.1' / 'train'
 
 for file in sorted(test_dir.glob('*.txt')):
     texts.append(file.read_text(encoding='utf-8'))
@@ -29,9 +29,12 @@ for entity_type in types:
         fp += len(pred - true)
         fn += len(true - pred)
 
+    precision = tp / (tp + fp) if tp + fp else 0
+    recall = tp / (tp + fn) if tp + fn else 0
     f1 = 2 * tp / (2 * tp + fp + fn) if tp + fp + fn else 0
     scores.append(f1)
     print(f'{entity_type:20} F1 = {f1:.4f}')
 
 print(f'\nПроверено текстов: {len(texts)}')
 print(f'Средняя F1 по типам: {sum(scores) / len(scores):.4f}')
+print(f'{entity_type:20} P = {precision:.4f} R = {recall:.4f} F1 = {f1:.4f} TP = {tp} FP = {fp} FN = {fn}')
