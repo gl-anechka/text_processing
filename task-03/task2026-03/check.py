@@ -5,7 +5,7 @@ from pathlib import Path
 
 texts = []
 answers = []
-test_dir = Path(__file__).parent / 'NEREL-v1.1' / 'dev'
+test_dir = Path(__file__).parent / 'NEREL-v1.1' / 'test'
 
 for file in sorted(test_dir.glob('*.txt')):
     texts.append(file.read_text(encoding='utf-8'))

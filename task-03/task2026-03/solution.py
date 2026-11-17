@@ -14,7 +14,6 @@ class Solution:
 
     def predict(self, texts: List[str]) -> Iterable[Set[Tuple[int, int, str]]]:
         results = []
-        none_idx = list(self.model.classes_).index('NONE')
 
         for text in texts:
             tokens = tokenize(text)
@@ -25,7 +24,9 @@ class Solution:
 
             X = [features for start, end, features, entity_types in examples]
             X_matrix = self.vectorizer.transform(X)
-            predictions = self.model.predict(X_matrix)
+
+            scores = self.model.decision_function(X_matrix)
+            predictions = self.model.classes_[scores.argmax(axis=1)]
 
             entities = set()
             for (start, end, features, entity_types), predicted_type in zip(examples, predictions):

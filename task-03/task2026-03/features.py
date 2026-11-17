@@ -16,7 +16,7 @@ def extract_features(text, tokens, i, j):
     start = tokens[i][1]
     end = tokens[j][2]
     fragment = text[start:end]
-    return {'first': first.lower(),  # первое слово сущности
+    features = {'first': first.lower(),  # первое слово сущности
             'last': last.lower(),  # последнее слово сущности
             'length': len(words),  # длина фрагмента
 
@@ -36,6 +36,12 @@ def extract_features(text, tokens, i, j):
 
             'all_capitalized': all(w[0].isupper() for w in words),  # фрагменты из слов с заглавной буквы
             'n_capitalized': min(5, sum(w[0].isupper() for w in words))}  # кол-во таких слов
+
+    # наличие слов внутри фрагмента
+    for word in words:
+        features['inside_word=' + word.lower()] = True
+
+    return features
 
 
 # функция, которая создает обучающие примеры для модели
